@@ -1,7 +1,7 @@
+#include "phy.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <termios.h>
 
 // Функция для инициализации UART
 void init_uart(const char *port) {

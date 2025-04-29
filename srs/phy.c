@@ -1,45 +1,32 @@
 #include "phy.h"
-#include <fcntl.h>
-#include <unistd.h>
 #include <stdio.h>
 
-// Функция для инициализации UART
-void init_uart(const char *port) {
-    int fd = open(port, O_RDWR | O_NOCTTY);
+int main() {
+    const char *port = "/dev/ttyS0";  // Путь к порту UART
+
+    // Инициализация UART
+    int fd = init_uart(port);
     if (fd == -1) {
-        perror("Unable to open serial port");
-        return;
+        fprintf(stderr, "Failed to initialize UART.\n");
+        return 1;
     }
 
-    struct termios options;
-    tcgetattr(fd, &options);
-    options.c_cflag = B115200 | CS8 | CLOCAL | CREAD;
-    options.c_iflag = IGNPAR;
-    options.c_oflag = 0;
-    options.c_lflag = ICANON;
-    tcflush(fd, TCIFLUSH);
-    tcsetattr(fd, TCSANOW, &options);
-}
-
-// Функция для отправки данных через UART
-void send_uart(const char *port, const uint8_t *data, size_t len) {
-    int fd = open(port, O_RDWR | O_NOCTTY);
-    if (fd == -1) {
-        perror("Unable to open serial port");
-        return;
+    // Пример отправки данных через UART
+    uint8_t data_to_send[] = "Hello, UART!";
+    if (send_uart(fd, data_to_send, sizeof(data_to_send)) == -1) {
+        fprintf(stderr, "Failed to send data.\n");
     }
-    write(fd, data, len);  // Отправляем данные через UART
-    close(fd);
-}
 
-// Функция для получения данных из UART
-int receive_uart(const char *port, uint8_t *buffer, size_t len) {
-    int fd = open(port, O_RDWR | O_NOCTTY);
-    if (fd == -1) {
-        perror("Unable to open serial port");
-        return -1;
+    // Пример получения данных через UART
+    uint8_t received_data[128];
+    ssize_t bytes_read = receive_uart(fd, received_data, sizeof(received_data));
+    if (bytes_read == -1) {
+        fprintf(stderr, "Failed to receive data.\n");
+    } else {
+        printf("Received data: %.*s\n", (int)bytes_read, received_data);
     }
-    int bytesRead = read(fd, buffer, len);
-    close(fd);
-    return bytesRead;
+
+    // Закрытие UART
+    close_uart(fd);
+    return 0;
 }

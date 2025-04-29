@@ -2,16 +2,15 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "include/aes.h"           // твоя реализация AES-128
-//#include "crypt.h"      // обёртка над libgost
-#include "srs/phy.h"           // эмуляция PHY (UART)
-#include "srs/mac.h"           // MAC уровень
-#include "srs/aps.h"           // APS + криптография
+#include "aes.h"      // твоя реализация AES-128
+#include "phy.h"      // эмуляция PHY (UART)
+#include "mac.h"      // MAC уровень
+#include "aps.h"      // APS + криптография
 
 #define TEST_DATA_LEN 16
 
 int main() {
-    const char *port = "/dev/tty0";  // виртуальный порт (QEMU, QNX)
+    const char *port = "virtual_port";  // виртуальный порт для PHY-эмуляции
     uint8_t key[16] = {
         0x00, 0x01, 0x02, 0x03,
         0x04, 0x05, 0x06, 0x07,
@@ -32,30 +31,23 @@ int main() {
         0x44, 0x55, 0x66, 0x77
     };
 
-    // Инициализация PHY
+    // Инициализация виртуального PHY (UART)
     if (init_uart(port) != 0) {
-        fprintf(stderr, "Failed to initialize UART.\n");
+        fprintf(stderr, "Failed to initialize UART/PHY.\n");
         return 1;
     }
 
     printf("[*] Sending secured APS message...\n");
 
-    send_aps_message_with_encryption(
-        port,
-        test_data,
-        TEST_DATA_LEN,
-        key,
-        iv
-    );
+    send_aps_message(port, test_data, TEST_DATA_LEN, key, iv);
 
     printf("[*] Waiting to receive secured APS message...\n");
 
-    uint8_t recv_buffer[256];
-    size_t recv_len = sizeof(recv_buffer);
-    if (receive_aps_message_with_decryption(
-            port, recv_buffer, &recv_len, key, iv) > 0) {
-        
-        printf("[+] Received and verified message:\n");
+    uint8_t recv_buffer[256] = {0};
+    size_t recv_len = 0;
+
+    if (receive_aps_message(port, recv_buffer, &recv_len, key, iv)) {
+        printf("[+] Received and verified message (%zu bytes):\n", recv_len);
         for (size_t i = 0; i < recv_len; i++) {
             printf("%02X ", recv_buffer[i]);
         }

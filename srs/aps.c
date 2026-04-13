@@ -1,7 +1,7 @@
-#include "aps.h"
-#include "aes.h"
-#include "streebog.h"
-#include "phy.h"
+#include "../include/aps.h"
+#include "../include/aes.h"
+#include "../include/streebog.h"
+#include "../include/phy.h"
 
 #include <string.h>
 

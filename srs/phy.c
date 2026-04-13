@@ -1,4 +1,4 @@
-#include "phy.h"
+#include "../include/phy.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>

@@ -1,4 +1,4 @@
-#include "streebog.h"
+#include "../include/streebog.h"
 #include <crypt.h>
 
 void stribog_hash(const uint8_t *data, size_t len, uint8_t *out_hash) {

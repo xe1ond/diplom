@@ -1,68 +1,70 @@
-#include <stdio.h>
-#include <string.h>
+#ifndef APS_H
+#define APS_H
+
 #include <stdint.h>
-#include <stdlib.h>
-#include "aes.h"         // Библиотека для AES
-#include "streebog.h"   // Библиотека для Стрибога
-// Функция для шифрования данных с использованием AES-128 в режиме CBC
-void aes_encrypt(uint8_t *input, uint8_t *key, uint8_t *iv, uint8_t *output, size_t len) {
-    AES_ctx ctx;
-    AES_init_ctx_iv(&ctx, key, iv);
-    for (size_t i = 0; i < len; i += 16) {
-        AES_CBC_encrypt_buffer(&ctx, output + i, input + i, 16);  // Шифрование 16 байтов за раз
-    }
-}
-// Функция для хеширования данных с использованием Стрибог (ГОСТ)
-void stribog_hash(uint8_t *data, size_t data_len, uint8_t *hash) {
-    generate_streebog_hash(data, data_len, hash);  // Хеширование с использованием ГОСТ (Стрибог)
-}
-// Структура для хранения пакета с шифрованными данными и хешем
+#include <stddef.h>
+#include "nwk.h"
+#include "streebog.h"
+
+/*
+ * APS (Application Support Sublayer) — верхний уровень ZigBee-стека.
+ *
+ * В данной реализации APS выполняет:
+ *   - шифрование полезной нагрузки алгоритмом AES-128-CBC;
+ *   - вычисление MAC (Message Authentication Code) на основе
+ *     хеша Стрибог-256 от зашифрованных данных;
+ *   - сериализацию/десериализацию защищённого APS-кадра;
+ *   - передачу и приём через NWK-уровень.
+ *
+ * Примечание: в стандарте ZigBee используется AES-128-CCM*.
+ * Схема AES-CBC + Стрибог применяется в данном проекте
+ * как учебная реализация с российской криптографией.
+ */
+
+#define APS_MAX_PAYLOAD_SIZE   100  /* макс. открытый текст, байт          */
+#define APS_KEY_SIZE           16   /* AES-128: ключ 16 байт               */
+#define APS_IV_SIZE            16   /* AES-CBC: вектор инициализации 16 байт */
+
+/*
+ * Защищённый APS-кадр.
+ *
+ *  +------------------+-------------+---------------------+
+ *  | ciphertext_len   | ciphertext  |      auth_tag       |
+ *  |    (2 байта)     | (до 116 б)  | (STREEBOG_HASH_SIZE)|
+ *  +------------------+-------------+---------------------+
+ */
 typedef struct {
-    uint8_t encrypted_data[MAX_PACKET_SIZE];
-    uint8_t hash[32];  // Хеш длиной 256 бит
-    size_t data_len;
-} aps_packet_t;
+    uint16_t ciphertext_len;
+    uint8_t  ciphertext[APS_MAX_PAYLOAD_SIZE + APS_IV_SIZE]; /* с выравниванием */
+    uint8_t  auth_tag[STREEBOG_HASH_SIZE];
+} aps_frame_t;
 
-// Функция для отправки зашифрованных данных с хешем
-void send_aps_message_with_encryption(const char *port, uint8_t *data, size_t data_len, uint8_t *key, uint8_t *iv) {
-    uint8_t encrypted_data[MAX_PACKET_SIZE];
-    uint8_t hash[32];  // Хеш Стрибога (256 бит)
+/*
+ * Контекст APS-уровня.
+ */
+typedef struct {
+    nwk_ctx_t *nwk;
+    uint8_t    aes_key[APS_KEY_SIZE];
+    uint8_t    aes_iv[APS_IV_SIZE];
+} aps_ctx_t;
 
-    // Шифрование данных с использованием AES-128
-    aes_encrypt(data, key, iv, encrypted_data, data_len);
+/* Инициализация APS. */
+void aps_init(aps_ctx_t *ctx, nwk_ctx_t *nwk,
+              const uint8_t *aes_key, const uint8_t *aes_iv);
 
-    // Генерация хеша с использованием Стрибога
-    stribog_hash(encrypted_data, data_len, hash);
+/*
+ * Отправка защищённого APS-сообщения.
+ * plaintext шифруется AES-CBC, затем вычисляется Стрибог-256 от шифротекста.
+ */
+int aps_send(aps_ctx_t *ctx, uint16_t dst_addr,
+             const uint8_t *plaintext, size_t len);
 
-    // Формируем пакет с зашифрованными данными и хешем
-    aps_packet_t packet;
-    memcpy(packet.encrypted_data, encrypted_data, data_len);
-    memcpy(packet.hash, hash, 32);  // Хеш данных
+/*
+ * Приём и проверка APS-сообщения.
+ * Проверяет auth_tag, расшифровывает, записывает открытый текст в plaintext.
+ * Возвращает число байт или отрицательный код ошибки.
+ */
+int aps_recv(aps_ctx_t *ctx, uint8_t *plaintext, size_t *len,
+             uint16_t *src_addr);
 
-    // Отправляем зашифрованный пакет с хешем через MAC слой
-    send_mac_packet(port, (mac_packet_t *)&packet);
-}
-
-// Функция для получения зашифрованных данных и проверки хеша
-int receive_aps_message_with_decryption(const char *port, uint8_t *data, size_t *data_len, uint8_t *key, uint8_t *iv) {
-    mac_packet_t packet;
-    int bytesRead = receive_mac_packet(port, &packet);
-    if (bytesRead > 0) {
-        aps_packet_t *aps_packet = (aps_packet_t *)packet.data;
-        
-        // Проверка хеша
-        uint8_t computed_hash[32];
-        stribog_hash(aps_packet->encrypted_data, *data_len, computed_hash);
-
-        if (memcmp(aps_packet->hash, computed_hash, 32) != 0) {
-            printf("Data integrity check failed.\n");
-            return -1;  // Ошибка проверки целостности
-        }
-
-        // Дешифровка данных с использованием AES-128
-        aes_encrypt(aps_packet->encrypted_data, key, iv, data, *data_len);  // Дешифрование с использованием AES
-
-        return bytesRead;
-    }
-    return -1;
-}
+#endif /* APS_H */

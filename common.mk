@@ -5,6 +5,7 @@ include $(QCONFIG)
 
 CPPFLAGS += -D_QNX_SOURCE=1
 CFLAGS += -D_QNX_SOURCE=1
+LIBS +=  ssl crypto
 
 include $(MKFILES_ROOT)/autotools.mk
 include $(MKFILES_ROOT)/qtargets.mk

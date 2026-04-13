@@ -1,2 +1,21 @@
-AUTOMAKE_OPTIONS = foreign
-SUBDIRS = include srs 
+AUTOMAKE_OPTIONS = foreign subdir-object
+AM_CPPFLAGS = \
+-I$(top_srcdir)/include
+bin_PROGRAMS = diplom
+
+diplom_SOURCES = \
+main.c    \
+srs/phy.c     \
+srs/mac.c     \
+srs/nwk.c     \
+srs/aps.c     \
+srs/streebog.c
+
+include_HEADERS = \
+include/phy.h       \
+include/mac.h       \
+include/nwk.h       \
+include/aps.h       \
+include/streebog.h  \
+include/aes.h
+    

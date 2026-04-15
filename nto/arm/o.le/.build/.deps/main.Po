@@ -1,0 +1,70 @@
+main.o: /home/alex/diplom/main.c \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/stdio.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/platform.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/srcversion.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/kpdaversion.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/compiler_gnu.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/cdefs.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/arm/platform.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/_pack64.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/target_nto.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/_packpop.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/stdint.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/string.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/strings.h \
+ /home/alex/diplom/include/phy.h \
+ /opt/kpdatrunkeip/host/linux64/x86_64/usr/lib/gcc/arm-unknown-nto-qnx6.5.0/8.3.0/include/stddef.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/stddef.h \
+ /opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/types.h \
+ /home/alex/diplom/include/mac.h /home/alex/diplom/include/phy.h \
+ /home/alex/diplom/include/nwk.h /home/alex/diplom/include/mac.h \
+ /home/alex/diplom/include/aps.h /home/alex/diplom/include/nwk.h \
+ /home/alex/diplom/include/streebog.h
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/stdio.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/platform.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/srcversion.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/kpdaversion.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/compiler_gnu.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/cdefs.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/arm/platform.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/_pack64.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/target_nto.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/_packpop.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/stdint.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/string.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/strings.h:
+
+/home/alex/diplom/include/phy.h:
+
+/opt/kpdatrunkeip/host/linux64/x86_64/usr/lib/gcc/arm-unknown-nto-qnx6.5.0/8.3.0/include/stddef.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/stddef.h:
+
+/opt/kpdatrunkeip/target/neutrino/armle/usr/include/sys/types.h:
+
+/home/alex/diplom/include/mac.h:
+
+/home/alex/diplom/include/phy.h:
+
+/home/alex/diplom/include/nwk.h:
+
+/home/alex/diplom/include/mac.h:
+
+/home/alex/diplom/include/aps.h:
+
+/home/alex/diplom/include/nwk.h:
+
+/home/alex/diplom/include/streebog.h:

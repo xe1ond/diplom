@@ -5,6 +5,9 @@ include $(QCONFIG)
 
 CPPFLAGS += -D_QNX_SOURCE=1
 CFLAGS += -D_QNX_SOURCE=1
+
+AUTORECONFOPTS=-fi
+
 LIBS +=  ssl crypto
 
 include $(MKFILES_ROOT)/autotools.mk

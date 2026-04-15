@@ -2,10 +2,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "srs/phy.h"
-#include "srs/mac.h"
-#include "srs/nwk.h"
-#include "srs/aps.h"
+#include "phy.h"
+#include "mac.h"
+#include "nwk.h"
+#include "aps.h"
 
 #define PAN_ID       0xBEEF
 #define ADDR_NODE_A  0x0001

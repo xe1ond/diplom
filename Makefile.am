@@ -1,4 +1,5 @@
-AUTOMAKE_OPTIONS = foreign subdir-object
+AM_CFLAGS = -Wall -Wextra -I$(top_srcdir)/include
+AUTOMAKE_OPTIONS = foreign subdir-objects
 AM_CPPFLAGS = \
 -I$(top_srcdir)/include
 bin_PROGRAMS = diplom
@@ -10,6 +11,8 @@ srs/mac.c     \
 srs/nwk.c     \
 srs/aps.c     \
 srs/streebog.c
+
+diplom_LDADD = -lssl -lcrypto
 
 include_HEADERS = \
 include/phy.h       \

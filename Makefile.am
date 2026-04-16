@@ -12,7 +12,7 @@ srs/nwk.c     \
 srs/aps.c     \
 srs/streebog.c
 
-diplom_LDADD = -lssl -lcrypto
+diplom_LDADD = -lssl -lcrypt
 
 include_HEADERS = \
 include/phy.h       \
